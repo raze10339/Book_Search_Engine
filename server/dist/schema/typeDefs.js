@@ -38,7 +38,7 @@ const typeDefs = gql `
  
   type Query {
     GetUser: Response 
-    GetUserBooks: [Book!] 
+    GetUserBooks: [Book] 
   }
 
  

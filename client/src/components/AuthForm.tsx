@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { LOGIN_USER, REGISTER_USER } from '../../graphql/mutations';
+import { LOGIN_USER, REGISTER_USER } from '../graphql/mutations';
 import { useStore } from '../store';
 
 const initialFormData = {

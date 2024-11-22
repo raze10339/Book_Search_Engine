@@ -5,7 +5,7 @@ import AuthForm from './AuthForm';
 import { useStore } from '../store';
 // import { logoutUser } from '../utils/API';
 import { useMutation } from '@apollo/client'; 
-import { LOGOUT_USER } from '../../graphql/mutations';
+import { LOGOUT_USER } from '../graphql/mutations';
 
 const AppNavbar = () => {
   // set modal display state

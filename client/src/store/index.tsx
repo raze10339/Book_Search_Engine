@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, createContext, Dispatch, SetStateAction } from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_USER } from '../../graphql/queries';
+import { GET_USER } from '../graphql/queries';
 
 interface StoreProviderProps {
   children: React.ReactNode;

@@ -10,8 +10,8 @@ import {
   Row
 } from 'react-bootstrap';
 
-import { GET_USER_BOOKS } from '../../graphql/queries'; 
-import { SAVE_BOOK } from '../../graphql/mutations';
+import { GET_USER_BOOKS } from '../graphql/queries'; 
+import { SAVE_BOOK } from '../graphql/mutations';
 
 import { Book, GoogleAPIBook } from '../interfaces/index.d';
 import { useStore } from '../store';

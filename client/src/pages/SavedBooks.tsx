@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Container, Card, Button } from 'react-bootstrap';
 
-import { GET_USER_BOOKS } from '../../graphql/queries'; 
-import { DELETE_BOOK } from '../../graphql/mutations';
+import { GET_USER_BOOKS } from '../graphql/queries'; 
+import { DELETE_BOOK } from '../graphql/mutations';
 
 
 import { Book } from '../interfaces/index.d';
