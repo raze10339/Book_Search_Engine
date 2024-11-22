@@ -39,10 +39,10 @@ const auth_resolvers = {
             return user || null;
         },
         async GetUserBooks(_: any, __: any, context: Context) {
-            if (!context.req.user) {
-                return {
-                    errors: ['You are not authorized to perform this action']
-                };
+
+            if (!context.req.user._id) {
+                throw new GraphQLError('You are not authorized to perform this action');
+               
             }
 
             const user_id = context.req.user._id;
