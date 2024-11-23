@@ -26,7 +26,7 @@ function getUserId(context: Context): Types.ObjectId | null {
 
 const auth_resolvers = {
     Query: {
-        async GetUser(_: any, __: any, context: Context) {
+        async getUser(_: any, __: any, context: Context) {
             if (!context.req.user) {
                 return {
                     user: null
@@ -38,10 +38,10 @@ const auth_resolvers = {
 
             return user || null;
         },
-        async GetUserBooks(_: any, __: any, context: Context) {
+        async getUserBooks(_: any, __: any, context: Context) {
 
-            if (!context.req.user._id) {
-                throw new GraphQLError('You are not authorized to perform this action');
+            if (!context.req.user) {
+                return[];
                
             }
 
@@ -53,7 +53,7 @@ const auth_resolvers = {
     },
 
     Mutation: {
-        async RegisterUser(_: any, args: { username: string; email: string; password: string; }, context: Context) {
+        async registerUser(_: any, args: { username: string; email: string; password: string; }, context: Context) {
             try {
                 const user = await User.create(args);
                 const token = createToken(user._id);
@@ -74,7 +74,7 @@ const auth_resolvers = {
             }
         },
 
-        async LoginUser(_: any, args: { email: string; password: string; }, context: Context) {
+        async loginUser(_: any, args: { email: string; password: string; }, context: Context) {
             const user: UserInterface | null = await User.findOne({
                 email: args.email
             });
@@ -102,7 +102,7 @@ const auth_resolvers = {
             };
         },
 
-        LogoutUser(_: any, __: any, context: Context) {
+        logoutUser(_: any, __: any, context: Context) {
             context.res.clearCookie('book_app_token');
 
             return {
@@ -110,7 +110,7 @@ const auth_resolvers = {
             };
         },
 
-        async SaveBook(_: any, args: any, context: Context) {
+        async saveBook(_: any, args: any, context: Context) {
             const user_id = getUserId(context);
 
             if (!user_id) {
@@ -126,7 +126,7 @@ const auth_resolvers = {
             return { message: 'Book saved successfully!' };
         },
 
-        async DeleteBook(_: any, args: any, context: Context) {
+        async deleteBook(_: any, args: any, context: Context) {
             const user_id = getUserId(context);
 
             if (!user_id) {

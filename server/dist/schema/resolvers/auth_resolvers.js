@@ -16,7 +16,7 @@ function getUserId(context) {
 }
 const auth_resolvers = {
     Query: {
-        async GetUser(_, __, context) {
+        async getUser(_, __, context) {
             if (!context.req.user) {
                 return {
                     user: null
@@ -26,9 +26,9 @@ const auth_resolvers = {
             const user = await User.findById(user_id).select('_id username savedBooks');
             return user || null;
         },
-        async GetUserBooks(_, __, context) {
-            if (!context.req.user._id) {
-                throw new GraphQLError('You are not authorized to perform this action');
+        async getUserBooks(_, __, context) {
+            if (!context.req.user) {
+                return [];
             }
             const user_id = context.req.user._id;
             const user = await User.findById(user_id);
@@ -36,7 +36,7 @@ const auth_resolvers = {
         },
     },
     Mutation: {
-        async RegisterUser(_, args, context) {
+        async registerUser(_, args, context) {
             try {
                 const user = await User.create(args);
                 const token = createToken(user._id);
@@ -54,7 +54,7 @@ const auth_resolvers = {
                 throw new GraphQLError(errorMessage);
             }
         },
-        async LoginUser(_, args, context) {
+        async loginUser(_, args, context) {
             const user = await User.findOne({
                 email: args.email
             });
@@ -75,13 +75,13 @@ const auth_resolvers = {
                 user: user
             };
         },
-        LogoutUser(_, __, context) {
+        logoutUser(_, __, context) {
             context.res.clearCookie('book_app_token');
             return {
                 message: 'Logged out successfully!'
             };
         },
-        async SaveBook(_, args, context) {
+        async saveBook(_, args, context) {
             const user_id = getUserId(context);
             if (!user_id) {
                 throw new Error('User not authenticated');
@@ -89,7 +89,7 @@ const auth_resolvers = {
             await User.findOneAndUpdate({ _id: user_id }, { $addToSet: { savedBooks: args.input } }, { new: true, runValidators: true });
             return { message: 'Book saved successfully!' };
         },
-        async DeleteBook(_, args, context) {
+        async deleteBook(_, args, context) {
             const user_id = getUserId(context);
             if (!user_id) {
                 throw new Error('User not authenticated');

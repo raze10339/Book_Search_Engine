@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 export const GET_USER = gql`
   query GetUser {
     getUser {
+      user{
       _id
       username
       email
@@ -15,8 +16,11 @@ export const GET_USER = gql`
         image
         link
       }
+      }
+     
     }
   }
+  
 `;
 
 export const GET_USER_BOOKS = gql`

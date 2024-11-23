@@ -17,7 +17,6 @@ export const LOGIN_USER = gql`
           link
         }
       }
-      token
       message
     }
   }
@@ -40,7 +39,6 @@ export const REGISTER_USER = gql`
           link
         }
       }
-      token
       message
     }
   }
