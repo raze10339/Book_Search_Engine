@@ -12,7 +12,7 @@ const initialFormData = {
   errorMessage: ''
 };
 
-const AuthForm = ({ isLogin }: { handleModalClose: () => void; isLogin: boolean; }) => {
+const AuthForm = ({ isLogin, handleModalClose }: { handleModalClose: () => void; isLogin: boolean; }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [showAlert, setShowAlert] = useState(false);
   const [loginUserMutation] = useMutation(LOGIN_USER);
@@ -53,6 +53,8 @@ const AuthForm = ({ isLogin }: { handleModalClose: () => void; isLogin: boolean;
       }));
 
       setFormData({ ...initialFormData });
+      handleModalClose();
+      
       navigate('/');
     } catch (error: any) {
       setFormData({

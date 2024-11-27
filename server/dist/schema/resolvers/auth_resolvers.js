@@ -17,23 +17,24 @@ function getUserId(context) {
 const auth_resolvers = {
     Query: {
         async getUser(_, __, context) {
-            if (!context.req.user) {
-                return {
-                    user: null
-                };
-            }
-            const user_id = context.req.user._id;
-            const user = await User.findById(user_id).select('_id username savedBooks');
-            return user || null;
+            return {
+                user: context.req.user || null
+            };
         },
         async getUserBooks(_, __, context) {
-            if (!context.req.user) {
+            try {
+                if (!context.req.user) {
+                    return [];
+                }
+                const user_id = context.req.user._id;
+                const user = await User.findById(user_id).select('savedBooks');
+                return user?.savedBooks || [];
+            }
+            catch (error) {
+                console.error('Error fetching user books:', error);
                 return [];
             }
-            const user_id = context.req.user._id;
-            const user = await User.findById(user_id);
-            return user?.savedBooks || [];
-        },
+        }
     },
     Mutation: {
         async registerUser(_, args, context) {
@@ -81,20 +82,30 @@ const auth_resolvers = {
                 message: 'Logged out successfully!'
             };
         },
-        async saveBook(_, args, context) {
-            const user_id = getUserId(context);
-            if (!user_id) {
-                throw new Error('User not authenticated');
+        async saveBook(_, { input }, context) {
+            try {
+                const user_id = getUserId(context);
+                if (!user_id) {
+                    throw new Error('User not authenticated');
+                }
+                console.log('Saving book for user:', user_id, 'Book input:', input);
+                const updatedUser = await User.findByIdAndUpdate(user_id, { $addToSet: { savedBooks: input } }, { new: true, runValidators: true });
+                if (!updatedUser) {
+                    throw new Error('Failed to save book');
+                }
+                console.log('Book saved successfully:', updatedUser.savedBooks);
+                return { message: 'Book saved successfully!' };
             }
-            await User.findOneAndUpdate({ _id: user_id }, { $addToSet: { savedBooks: args.input } }, { new: true, runValidators: true });
-            return { message: 'Book saved successfully!' };
+            catch (error) {
+                console.error('Error saving book:', error);
+                throw new Error('Error saving book');
+            }
         },
         async deleteBook(_, args, context) {
-            const user_id = getUserId(context);
-            if (!user_id) {
+            if (!context.req.user) {
                 throw new Error('User not authenticated');
             }
-            const updatedUser = await User.findOneAndUpdate({ _id: user_id }, { $pull: { savedBooks: { googleBookId: args.bookId } } }, { new: true });
+            const updatedUser = await User.findOneAndUpdate({ _id: context.req.user._id }, { $pull: { savedBooks: { googleBookId: args.googleBookId } } }, { new: true });
             if (!updatedUser) {
                 throw new Error("Couldn't find user with this ID");
             }

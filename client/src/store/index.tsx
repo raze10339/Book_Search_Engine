@@ -26,21 +26,16 @@ const initialState: StateValue = {
 export function StoreProvider({ children }: StoreProviderProps) {
   const [state, setState] = useState<StateValue>(initialState);
 
-  const { data, loading, error } = useQuery(GET_USER);
+  const { data } = useQuery(GET_USER);
 
   useEffect(() => {
-    if (!loading && data) {
+    if (data) {
       setState({
         loading: false,
-        user: data.getUser || null, 
+        user: data.getUser.user, 
       });
-    } else if (!loading && error) {
-      setState({
-        loading: false,
-        user: null, 
-      });
-    }
-  }, [data, loading, error]);
+    } 
+  }, [data]);
 
   return (
     <StoreContext.Provider

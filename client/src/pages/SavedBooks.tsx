@@ -13,14 +13,15 @@ const SavedBooks = () => {
   const [userBooks, setUserBooks] = useState<Book[]>([]);
   const { state } = useStore();
 
-  const { data} = useQuery(GET_USER_BOOKS, { skip: !state.user });
+  const { data } = useQuery(GET_USER_BOOKS);
   const [deleteBookMutation] = useMutation(DELETE_BOOK);
 
   useEffect(() => {
-    if (data) {
+    if (data && data.getUserBooks) {
       setUserBooks(data.getUserBooks);
     }
   }, [data]);
+
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   async function handleDeleteBook(bookId: string) {
@@ -39,7 +40,7 @@ const SavedBooks = () => {
     <>
       <div className='text-light bg-dark p-5'>
         <Container>
-          <h1>Viewing {!state.loading && state.user.username}'s saved books!</h1>
+          <h1>Viewing {!state.loading && state.user && state.user.username ? `${state.user.username}'s saved books!` : 'saved books!'}</h1>
         </Container>
       </div>
 

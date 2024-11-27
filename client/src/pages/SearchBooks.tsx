@@ -10,7 +10,7 @@ import {
   Row
 } from 'react-bootstrap';
 
-import { GET_USER_BOOKS } from '../graphql/queries'; 
+import { GET_USER_BOOKS } from '../graphql/queries';
 import { SAVE_BOOK } from '../graphql/mutations';
 
 import { Book, GoogleAPIBook } from '../interfaces/index.d';
@@ -18,7 +18,7 @@ import { useStore } from '../store';
 
 interface UserState {
   user: {
-    id: string;
+    _id: string;
     username: string;
     email: string;
     bookCount: number;
@@ -40,17 +40,18 @@ const SearchBooks = () => {
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
 
   const { data } = useQuery(GET_USER_BOOKS, { skip: !state.user });
-  const [saveBookMutation] = useMutation(SAVE_BOOK);
+  const [saveBookMutation] = useMutation(SAVE_BOOK, {
+    refetchQueries: [{ query: GET_USER_BOOKS }],
+  });
 
   useEffect(() => {
+    if (data) {
+      // Store just the googleBookId's from the user's books to the savedBooks array
+      setSavedBookIds(data.getUserBooks.map((book: Book) => book.googleBookId));
+    }
 
-
-
-    if (data) {  
-          // Store just the googleBookId's from the user's books to the savedBooks arra
-            setSavedBookIds(data.getUserBooks.map((book: Book) => book.googleBookId));
-          }
-        }, [data]);
+   
+  }, [data]);
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -70,7 +71,7 @@ const SearchBooks = () => {
         googleBookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
-        description: book.volumeInfo.description,
+        description: book.volumeInfo.description || 'no description',
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
 
@@ -83,11 +84,14 @@ const SearchBooks = () => {
 
   // create function to handle saving a book to our database
   const handleSaveBook = async (book: Book) => {
+    console.log(book);
     try {
       await saveBookMutation({
         variables: { input: book },
       });
-    
+
+
+
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, book.googleBookId]);
