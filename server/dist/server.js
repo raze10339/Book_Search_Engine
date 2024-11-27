@@ -20,10 +20,7 @@ db.once('open', async () => {
     app.use('/graphql', express.json(), cookieParser(), expressMiddleware(server, {
         context: authenticate
     }));
-    console.log('PROCESS PORT VARIABLE', process.env.PORT);
-    console.log('PORT VARIABLE');
     if (process.env.PORT) {
-        console.log('Triggered');
         const __dirname = path.dirname(new URL(import.meta.url).pathname);
         app.use(express.static(path.join(__dirname, '../../client/dist')));
         app.get('*', (_, res) => {
