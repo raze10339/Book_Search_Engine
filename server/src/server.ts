@@ -48,10 +48,10 @@ db.once('open', async () => {
   if (process.env.PORT) {
     console.log('Triggered')
     const __dirname = path.dirname(new URL(import.meta.url).pathname);
-    app.use(express.static(path.join(__dirname, '../../client/dist')));
+    app.use(express.static(path.join(__dirname, '../../../client/dist')));
 
     app.get('*', (_, res) => {
-      res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+      res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
     })
   }
 
